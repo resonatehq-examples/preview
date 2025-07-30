@@ -55,37 +55,32 @@ ts-node src/index.ts
 ```
 
 ```
-// Instantiate a Resonate runtime (in-memory, no server needed)
-const resonate = Resonate.local();
+import { Resonate } from "./src/resonate";
+import { Context } from "./src/context";
 
-// Instantiate a Resonate runtime (connecting to https://localhost:8001 and https://localhost:8002)
-//const resonate = Resonate.remote();
-
-// Register a an anonymous function under the name "fibonacci"
-const fibonacci = resonate.register("fibonacci", function* (
-  ctx: context.Context,
-  n: number
-) {
+function* fibonacci(ctx: Context, n: number): Generator {
   if (n <= 1) {
     return n;
   }
   // Recursively invoke durable sub-computations
   return (
-    (yield* ctx.run(fibonacci, n - 1)) +
-    (yield* ctx.run(fibonacci, n - 2))
+    (yield* ctx.run(fibonacci, n - 1)) + (yield* ctx.run(fibonacci, n - 2))
   );
-});
+}
 
-// Start the computation, start locally
-const h = await fibonacci.beginRun("fibonacci.10", 10);
+async function main() {
 
-// Start the computation, start remotely
-// const h = await fibonacci.beginRpc("fibonacci.10", 10);
+  // Instantiate a Resonate runtime (connecting to https://localhost:8001 and https://localhost:8002)
+  const resonate = Resonate.remote({});
 
-// Alternatively
-// const h = await resonate.beginRun("fibonacci.10", "fibonacci", 10);
-// const h = await resonate.beginRpc("fibonacci.10", "fibonacci", 10);
+  const convenientWrapper = resonate.register("fibonacci", fibonacci);
 
-// Await the result
-console.log("got", await h.result);
+  // Start the computation, start locally
+  const h = await convenientWrapper.beginRun("fibonacci.10", 10);
+
+  // Await the result
+  console.log("got", await h.result);
+}
+
+main().catch(console.error);
 ```
