@@ -7,7 +7,7 @@ The Resonate Server is the component that orchestrates workflows on Resonate Wor
 ### Install the Resonate Server
 
 ```
-brew install resonatehq/tp/resonate
+brew install resonatehq/tap/resonate
 ```
 
 # Run in Transient Mode
@@ -19,6 +19,7 @@ resonate serve --aio-store-sqlite-path :memory:
 ```
 
 This will start the Resonate Server in transient mode:
+
 - listening on port `8001` for incoming http requests
 - listening on port `8002` for outgoing Server Sent Events
 - transiently storing data in memory.
@@ -34,6 +35,7 @@ resonate serve
 ```
 
 This will start the Resonate Server in transient mode:
+
 - listening on port `8001` for incoming http requests
 - listening on port `8002` for outgoing Server Sent Events
 - persistently storing data on disk in `./resonate.db`
